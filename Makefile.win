@@ -1,0 +1,54 @@
+# Project: Sword-girl
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = Sword-girl_private.res
+OBJ  = Record.o Role.o assist.o Dialog.o Fighter.o Girl.o Map.o Menu.o $(RES)
+LINKOBJ  = Record.o Role.o assist.o Dialog.o Fighter.o Girl.o Map.o Menu.o $(RES)
+LIBS =  -L"Z:/Dev-CppPortable/App/devcpp/lib" -mwindows -lmingw32 -lSDLmain -lSDL -lSDL_gfx -lSDL_ttf  
+INCS =  -I"Z:/Dev-CppPortable/App/devcpp/include" 
+CXXINCS =  -I"Z:/Dev-CppPortable/App/devcpp/lib/gcc/mingw32/3.4.2/include"  -I"Z:/Dev-CppPortable/App/devcpp/include/c++/3.4.2/backward"  -I"Z:/Dev-CppPortable/App/devcpp/include/c++/3.4.2/mingw32"  -I"Z:/Dev-CppPortable/App/devcpp/include/c++/3.4.2"  -I"Z:/Dev-CppPortable/App/devcpp/include" 
+BIN  = Sword-girl.exe
+CXXFLAGS = $(CXXINCS)  
+CFLAGS = $(INCS) -Dmain=SDL_main   
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before Sword-girl.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "Sword-girl.exe" $(LIBS)
+
+Record.o: Record.cpp
+	$(CPP) -c Record.cpp -o Record.o $(CXXFLAGS)
+
+Role.o: Role.cpp
+	$(CPP) -c Role.cpp -o Role.o $(CXXFLAGS)
+
+assist.o: assist.cpp
+	$(CPP) -c assist.cpp -o assist.o $(CXXFLAGS)
+
+Dialog.o: Dialog.cpp
+	$(CPP) -c Dialog.cpp -o Dialog.o $(CXXFLAGS)
+
+Fighter.o: Fighter.cpp
+	$(CPP) -c Fighter.cpp -o Fighter.o $(CXXFLAGS)
+
+Girl.o: Girl.cpp
+	$(CPP) -c Girl.cpp -o Girl.o $(CXXFLAGS)
+
+Map.o: Map.cpp
+	$(CPP) -c Map.cpp -o Map.o $(CXXFLAGS)
+
+Menu.o: Menu.cpp
+	$(CPP) -c Menu.cpp -o Menu.o $(CXXFLAGS)
+
+Sword-girl_private.res: Sword-girl_private.rc 
+	$(WINDRES) -i Sword-girl_private.rc --input-format=rc -o Sword-girl_private.res -O coff 
