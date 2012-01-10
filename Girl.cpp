@@ -407,9 +407,9 @@ void InitSDL( int win )
     atexit(SDL_Quit);
 
     if (win == 0)
-        screen = SDL_SetVideoMode(480, 320, 16, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
+        screen = SDL_SetVideoMode(SCR_W, SCR_H, 16, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
     else
-        screen = SDL_SetVideoMode(480, 320, 16, SDL_HWSURFACE|SDL_DOUBLEBUF);
+        screen = SDL_SetVideoMode(SCR_W, SCR_H, 16, SDL_HWSURFACE|SDL_DOUBLEBUF);
 
     if (screen == NULL) {
         printf("Unable to set video mode: %s\n", SDL_GetError());
@@ -678,8 +678,11 @@ void MainMove()
 
 	//è®¡ç®—ç©å®¶æ‰€åœ¨çš„æ ¼å­
 	int grid_x, grid_y; 
-	grid_x = Aqing.X>>5;
-	grid_y = Aqing.Y >>5;
+	//grid_x = Aqing.X>>5;
+	//grid_y = Aqing.Y>>5;
+	
+	grid_x = Aqing.X/TILE_W;
+	grid_y = Aqing.Y/TILE_H;	
 
     if (keys[SDLK_DOWN]) {
 		Aqing.Dir = 0;
@@ -691,7 +694,7 @@ void MainMove()
 			Aqing.Y -= speed;
 		}
 		if(current_map->if_block(Aqing.X, Aqing.Y))
-			Aqing.Y = (grid_y+1)*32-10;
+			Aqing.Y = (grid_y+1)*TILE_H-10;
 	}
 	else if(keys[SDLK_RIGHT])	//æŒ‰ä¸‹æ–¹å‘é”®å³
 	{
@@ -705,7 +708,7 @@ void MainMove()
 			Aqing.X -= speed;
 
 		if(current_map->if_block (Aqing.X, Aqing.Y))
-			Aqing.X = (grid_x+1)*32-Aqing.Width/2;
+			Aqing.X = (grid_x+1)*TILE_W-Aqing.Width/2;
 	}
 	else if(keys[SDLK_LEFT])	//æŒ‰ä¸‹æ–¹å‘é”®å·¦
 	{
@@ -718,7 +721,7 @@ void MainMove()
 		if(CrushCheck())
 			Aqing.X += speed;
 		if(current_map->if_block (Aqing.X, Aqing.Y))
-			Aqing.X = grid_x*32+Aqing.Width/2;
+			Aqing.X = grid_x*TILE_W+Aqing.Width/2;
 	}
 	else if(keys[SDLK_UP])	//æŒ‰ä¸‹æ–¹å‘é”®ä¸Š
 	{
@@ -731,7 +734,7 @@ void MainMove()
 		if(CrushCheck())
 			Aqing.Y += speed;
 		if(current_map->if_block (Aqing.X, Aqing.Y))
-			Aqing.Y = grid_y*32;
+			Aqing.Y = grid_y*TILE_H;
 	}
 	else {
 		if(Aqing.Step)
@@ -885,7 +888,10 @@ void FightEnd()
 					common_diag.show( screen);
 					//FlipPage();
 					GotoMap(&Map_aqing);
+				
+                	//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
 					Aqing.set_location(2,0,SCR_W-90,80);
+					
 					Flag =GAME_MESSAGE_;
 					return;
 				}
@@ -896,6 +902,8 @@ void FightEnd()
 					common_diag.show( screen);
 					//FlipPage();
 					GotoMap(&Map_aqing);
+					
+					//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
 					Aqing.set_location(2,0,SCR_W-90,80);
 					Flag =GAME_MESSAGE_;
 					return;
@@ -907,11 +915,15 @@ void FightEnd()
 					common_diag.show( screen);
 					//FlipPage();
 					GotoMap(&Map_aqing);
+					
+					//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
 					Aqing.set_location(2,0,SCR_W-90,80);
 					Flag =GAME_MESSAGE_;
 					return;
 				}
 				GotoMap(&Map_aqing);
+				
+				//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
 				Aqing.set_location(2,0,SCR_W-90,80);
 				RefreshCanvas();
 				common_diag.set_text("é˜¿é’ï¼šè§‰å¾—å¥½è™šå¼±ï¼Œåœ¨åºŠä¸Šä¼‘æ¯ä¸€ä¸‹å§ã€‚");
@@ -937,8 +949,11 @@ void FightEnd()
 					{
 						Map_shaoxing.del_npc(&Wujianshi1 );
 						Map_shaoxing.del_npc(&Wujianshi2 );
+						
+						//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
 						Map_shaoxing.add_npc(&Fanli, 30, 220);
 						Aqing.set_location(1, 0, 180, 220);
+						
 						RefreshCanvas();
 						TrapNum = 210;
 						Flag = AUTO_PLAY_; 
@@ -973,6 +988,8 @@ void FightEnd()
 							common_diag.set_text("é‡å­©å­ï¼šä½ èµ¢äº†ï¼å®ç®±é‡Œçš„ä¸œè¥¿ä½ æ‹¿å»å§ï¼");
 							common_diag.show(screen);
 							//FlipPage();
+							
+							//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
 							Yehaizi.set_location(1,3, 350,150);
 							Flag = GAME_MESSAGE_;
 						}
@@ -994,6 +1011,8 @@ void FightEnd()
 						else if(! really_defeat_jianke)
 						{
 							really_defeat_jianke = 1;
+							
+							//¿ÉÄÜĞèÒªĞŞ¸Ä 
 							Jianke.X += 30;
 							Jianke.Y -= 20;
 							common_diag.set_text("ç¥ç§˜å‰‘å®¢ï¼šçœŸä¸ºä½ æ„Ÿåˆ°é«˜å…´ï¼ä½ å¯ä»¥æ‹¿èµ°å®ç®±ä¸­çš„å‰‘äº†ï¼ŒçœŸçš„å¾ˆé€‚åˆä½ çš„ã€‚");
@@ -1129,6 +1148,7 @@ void AutoPlay()
 	switch(TrapNum)
 	{
 	case 200:	//ä»è¶Šå›½åˆ°å´å›½
+	//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
 		Aqing.set_location(3,0,240,SCR_H-40);
 		GotoMap(&Map_Wuguo);
 		//ClrScr();
@@ -1138,6 +1158,8 @@ void AutoPlay()
 		Flag = GAME_MESSAGE_;
 		break;
 	case 201:	//ä»å´å›½åˆ°è¶Šå›½
+	
+	//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
 		Aqing.set_location(0,0, 200,100);
 		GotoMap(&Map_outside);
 		//ClrScr();
@@ -1197,6 +1219,8 @@ void AutoPlay()
 		{
 			Map_shaoxing.del_npc(&Fanli );
 			RefreshCanvas();
+			
+			//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
 			Fanli.set_location(2,0,80,95);
 			Flag = MAIN_MOVE_;
 		}
@@ -2819,7 +2843,11 @@ void InitData()
 	Map_caoyuan.init_map(15, "æ”¾ç‰§è‰åŸ", Tile_caoyuan, Trap_caoyuan, Block_caoyuan, map_tile2, 15, message_font, &message_color);	//7
 	Map_Gongdian.init_map(17, "å´ç‹å®«", Tile_caoyuan, Trap_gongdian, Block_gongdian, map_tile3, 15, message_font, &message_color);	//8
 	Map_Xiangfang.init_map(18, "èŒƒè ¡åºœä¸œå¢æˆ¿", Tile_xiangfang, Trap_xiangfang,Block_xiangfang,map_tile1,4, message_font, &message_color);	//9
-
+/*
+void Role::role_set (short id, const char *name,int h,int w,int x,int y,
+					int dir,int step, SDL_Surface * surf,
+					int map_id, short enemy_id)
+*/					
 	//åˆå§‹åŒ–è§’è‰²
 	Aqing.role_set (1,"é˜¿é’",90,55,250,150,0,0,hero,10, 0);	//1
 	QingBed.role_set(303, "é˜¿é’çš„å°åºŠ", 35, 35, 430,80,4,0, item, 10, 0);	//2

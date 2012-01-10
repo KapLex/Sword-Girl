@@ -3,8 +3,6 @@
 #include "Map.h"
 #include "assist.h"
 
-#define TILE_W SCR_W/15
-#define TILE_H SCR_H/10
 
 Map::Map()
 {
@@ -142,7 +140,7 @@ void Map::draw_map (SDL_Surface * dest_surf,
         printf("Truetype font engine has not been initialized!\n");
         exit(1);
     }
-    SDL_BlitText(Name, dest_surf, SCR_W/2, 30, Font, *Color);
+    SDL_BlitText(Name, dest_surf, SCR_W/2-8, 8, Font, *Color);
 
 	//更新Flash
 	flash = -flash;
@@ -309,16 +307,23 @@ void Map::del_trap_by_num(short num)
 short Map::if_block (int xCurrent,int yCurrent)
 {
 	int i,j;
-	i = yCurrent>>5;
-	j = xCurrent>>5;
+	
+	//i = yCurrent>>5;
+	//j = xCurrent>>5;	
+	i = yCurrent/TILE_H;
+	j = xCurrent/TILE_W;	
+	
 	return Block[i][j];
 }
 
 short Map::check_trap (int xCurrent,int yCurrent)
 {
 	int i,j;
-	i = yCurrent>>5;
-	j = xCurrent>>5;
+	
+	//i = yCurrent>>5;
+	//j = xCurrent>>5;
+	i = yCurrent/TILE_H;
+	j = xCurrent/TILE_W;	
 	return  Trap[i][j];
 
 }

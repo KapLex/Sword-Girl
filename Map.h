@@ -6,7 +6,11 @@
 #include "Role.h"
 
 #define SCR_W 480
-#define SCR_H 320
+#define SCR_H 270
+
+#define TILE_W (SCR_W/15)
+#define TILE_H (SCR_H/10)
+
 //BOOL flash;
 
 //地图类声明
