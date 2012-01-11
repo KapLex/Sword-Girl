@@ -54,18 +54,23 @@ void Map::draw_map_only(SDL_Surface *dest_surf)	//只画地图，用于战斗背
 	{
 		for(j=0;j<15;j++)
 		{
-			TileNum = Tile[i][j];
-			
+			TileNum = Tile[i][j];			
 			map_src.x = (TileNum % count_in_row)*32;
-			map_src.y = (TileNum/count_in_row)*32;
-			
+			map_src.y = (TileNum/count_in_row)*32;			
 			map_src.w = 32;
 			map_src.h = 32;
 
-            map_dest.x = j*TILE_W;
-            map_dest.y = i*TILE_H;
-			map_dest.w = TILE_W;
-			map_dest.h = TILE_H;
+#ifdef PSP
+            map_dest.x = j*32;
+            map_dest.y = i*27;
+			map_dest.w = 32;
+			map_dest.h = 27;
+#else
+            map_dest.x = j*32;
+            map_dest.y = i*32;
+			map_dest.w = 32;
+			map_dest.h = 32;
+#endif
 
             SDL_BlitSurface(Surf, &map_src, dest_surf, &map_dest);
 		}
@@ -91,10 +96,17 @@ void Map::draw_map (SDL_Surface * dest_surf,
 			map_src.w = 32;
 			map_src.h = 32;
 
-            map_dest.x = j*TILE_W;
-            map_dest.y = i*TILE_H;
-			map_dest.w = TILE_W;
-			map_dest.h = TILE_H;
+#ifdef PSP
+            map_dest.x = j*32;
+            map_dest.y = i*27;
+			map_dest.w = 32;
+			map_dest.h = 27;
+#else
+            map_dest.x = j*32;
+            map_dest.y = i*32;
+			map_dest.w = 32;
+			map_dest.h = 32;
+#endif
 
             SDL_BlitSurface(Surf, &map_src, dest_surf, &map_dest);
 						
@@ -307,11 +319,14 @@ void Map::del_trap_by_num(short num)
 short Map::if_block (int xCurrent,int yCurrent)
 {
 	int i,j;
-	
-	//i = yCurrent>>5;
-	//j = xCurrent>>5;	
-	i = yCurrent/TILE_H;
-	j = xCurrent/TILE_W;	
+
+#ifdef PSP
+	i = yCurrent/27;
+	j = xCurrent/32;
+#else
+	i = yCurrent>>5;
+	j = xCurrent>>5;	
+#endif	
 	
 	return Block[i][j];
 }
@@ -320,10 +335,14 @@ short Map::check_trap (int xCurrent,int yCurrent)
 {
 	int i,j;
 	
-	//i = yCurrent>>5;
-	//j = xCurrent>>5;
-	i = yCurrent/TILE_H;
-	j = xCurrent/TILE_W;	
+#ifdef PSP
+	i = yCurrent/27;
+	j = xCurrent/32;
+#else
+	i = yCurrent>>5;
+	j = xCurrent>>5;	
+#endif	
+
 	return  Trap[i][j];
 
 }

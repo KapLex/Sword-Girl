@@ -8,6 +8,9 @@
 #include "Fighter.h"
 #include "Menu.h"
 
+
+
+
 #define CK RGB(0,0,0)	//定义关键色
 #define speed 20	//定义角色移动速度
 #define FRAME_TIME 120	//定义一帧的毫秒数

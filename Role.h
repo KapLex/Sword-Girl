@@ -35,6 +35,9 @@ public:
 	void draw_self(SDL_Surface * dest_surf);
 	int move_to(int grid_x, int grid_y);
 
+	void role_set_PSP(short id, const char *name, int h, int w, 
+            int x,int y, int dir, int step,
+            SDL_Surface * surf,int map_id, short enemy_id);
 };
 
 #endif

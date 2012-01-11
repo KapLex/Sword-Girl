@@ -37,10 +37,18 @@ void Role::role_set (short id, const char *name,int h,int w,int x,int y,
 {
 	ID = id;
 	strcpy(Name,name);
+
 	Height = h;
 	Width = w;
 	X = x;
-	Y = y;
+
+
+#ifdef PSP
+    Y=(y*272)/320;
+#else
+    Y = y;
+#endif
+ 
 	Dir = dir;
 	Step = step;
 	Surf = surf;
@@ -48,6 +56,7 @@ void Role::role_set (short id, const char *name,int h,int w,int x,int y,
 	EnemyID = enemy_id;
 	R = NULL;
 }
+
 
 
 void Role::draw_self(SDL_Surface * dest_surf)

@@ -7,12 +7,12 @@ WINDRES = windres.exe
 RES  = Sword-girl_private.res
 OBJ  = Record.o Role.o assist.o Dialog.o Fighter.o Girl.o Map.o Menu.o $(RES)
 LINKOBJ  = Record.o Role.o assist.o Dialog.o Fighter.o Girl.o Map.o Menu.o $(RES)
-LIBS =  -L"V:/Dev-CppPortable/App/devcpp/lib" -mwindows -lmingw32 -lSDLmain -lSDL -lSDL_gfx -lSDL_ttf  
-INCS =  -I"V:/Dev-CppPortable/App/devcpp/include" 
-CXXINCS =  -I"V:/Dev-CppPortable/App/devcpp/lib/gcc/mingw32/3.4.2/include"  -I"V:/Dev-CppPortable/App/devcpp/include/c++/3.4.2/backward"  -I"V:/Dev-CppPortable/App/devcpp/include/c++/3.4.2/mingw32"  -I"V:/Dev-CppPortable/App/devcpp/include/c++/3.4.2"  -I"V:/Dev-CppPortable/App/devcpp/include" 
+LIBS =  -L"Z:/Dev-CppPortable/App/devcpp/lib" -mwindows -lmingw32 -lSDLmain -lSDL -lSDL_gfx -lSDL_ttf  
+INCS =  -I"Z:/Dev-CppPortable/App/devcpp/include" 
+CXXINCS =  -I"Z:/Dev-CppPortable/App/devcpp/lib/gcc/mingw32/3.4.2/include"  -I"Z:/Dev-CppPortable/App/devcpp/include/c++/3.4.2/backward"  -I"Z:/Dev-CppPortable/App/devcpp/include/c++/3.4.2/mingw32"  -I"Z:/Dev-CppPortable/App/devcpp/include/c++/3.4.2"  -I"Z:/Dev-CppPortable/App/devcpp/include" 
 BIN  = Sword-girl.exe
-CXXFLAGS = $(CXXINCS)  
-CFLAGS = $(INCS) -Dmain=SDL_main   
+CXXFLAGS = $(CXXINCS) -DPSP  
+CFLAGS = $(INCS) -Dmain=SDL_main -DPSP  
 RM = rm -f
 
 .PHONY: all all-before all-after clean clean-custom

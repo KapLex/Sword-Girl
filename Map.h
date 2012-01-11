@@ -5,11 +5,15 @@
 #include <SDL/SDL_ttf.h>
 #include "Role.h"
 
-#define SCR_W 480
-#define SCR_H 270
 
-#define TILE_W (SCR_W/15)
-#define TILE_H (SCR_H/10)
+#ifdef PSP
+    #define SCR_W 480
+    #define SCR_H 270
+#else
+    #define SCR_W 480
+    #define SCR_H 320
+#endif
+
 
 //BOOL flash;
 
@@ -23,7 +27,15 @@ public:
 	short Trap[10][15];
 	short Block[10][15];
 	int count_in_row;
-    SDL_Surface * Surf;
+
+//TO DO PSP  
+#ifdef PSP
+#else  
+#endif	
+
+  SDL_Surface * Surf;	
+
+
 	int NpcNum;
 	int Npcs[15];
 	Role *Npc;

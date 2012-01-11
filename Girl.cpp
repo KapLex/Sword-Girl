@@ -6,6 +6,8 @@
 #include "assist.h"
 
 
+
+
 //************************åˆå§‹åŒ–åœ°å›¾æ•°æ®****************************************
 	
 short Tile_aqing[10][15] = {//é˜¿é’å®¶åœ°å›¾æ•°æ®
@@ -678,11 +680,14 @@ void MainMove()
 
 	//è®¡ç®—ç©å®¶æ‰€åœ¨çš„æ ¼å­
 	int grid_x, grid_y; 
-	//grid_x = Aqing.X>>5;
-	//grid_y = Aqing.Y>>5;
-	
-	grid_x = Aqing.X/TILE_W;
-	grid_y = Aqing.Y/TILE_H;	
+
+#ifdef PSP
+	grid_x = Aqing.X/32;
+	grid_y = Aqing.Y/27;
+#else
+	grid_x = Aqing.X>>5;
+	grid_y = Aqing.Y>>5;
+#endif
 
     if (keys[SDLK_DOWN]) {
 		Aqing.Dir = 0;
@@ -694,7 +699,13 @@ void MainMove()
 			Aqing.Y -= speed;
 		}
 		if(current_map->if_block(Aqing.X, Aqing.Y))
-			Aqing.Y = (grid_y+1)*TILE_H-10;
+
+#ifdef PSP
+			Aqing.Y = (grid_y+1)*27-10;
+#else
+			Aqing.Y = (grid_y+1)*32-10;
+#endif
+
 	}
 	else if(keys[SDLK_RIGHT])	//æŒ‰ä¸‹æ–¹å‘é”®å³
 	{
@@ -708,8 +719,9 @@ void MainMove()
 			Aqing.X -= speed;
 
 		if(current_map->if_block (Aqing.X, Aqing.Y))
-			Aqing.X = (grid_x+1)*TILE_W-Aqing.Width/2;
+			Aqing.X = (grid_x+1)*32-Aqing.Width/2;
 	}
+
 	else if(keys[SDLK_LEFT])	//æŒ‰ä¸‹æ–¹å‘é”®å·¦
 	{
 		Aqing.Dir = 1;
@@ -721,7 +733,7 @@ void MainMove()
 		if(CrushCheck())
 			Aqing.X += speed;
 		if(current_map->if_block (Aqing.X, Aqing.Y))
-			Aqing.X = grid_x*TILE_W+Aqing.Width/2;
+			Aqing.X = grid_x*32+Aqing.Width/2;
 	}
 	else if(keys[SDLK_UP])	//æŒ‰ä¸‹æ–¹å‘é”®ä¸Š
 	{
@@ -734,7 +746,12 @@ void MainMove()
 		if(CrushCheck())
 			Aqing.Y += speed;
 		if(current_map->if_block (Aqing.X, Aqing.Y))
-			Aqing.Y = grid_y*TILE_H;
+
+#ifdef PSP
+			Aqing.Y = grid_y*27;
+#else
+			Aqing.Y = grid_y*32;
+#endif
 	}
 	else {
 		if(Aqing.Step)
@@ -889,7 +906,7 @@ void FightEnd()
 					//FlipPage();
 					GotoMap(&Map_aqing);
 				
-                	//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
+
 					Aqing.set_location(2,0,SCR_W-90,80);
 					
 					Flag =GAME_MESSAGE_;
@@ -903,7 +920,7 @@ void FightEnd()
 					//FlipPage();
 					GotoMap(&Map_aqing);
 					
-					//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
+
 					Aqing.set_location(2,0,SCR_W-90,80);
 					Flag =GAME_MESSAGE_;
 					return;
@@ -916,14 +933,14 @@ void FightEnd()
 					//FlipPage();
 					GotoMap(&Map_aqing);
 					
-					//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
+
 					Aqing.set_location(2,0,SCR_W-90,80);
 					Flag =GAME_MESSAGE_;
 					return;
 				}
 				GotoMap(&Map_aqing);
 				
-				//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
+
 				Aqing.set_location(2,0,SCR_W-90,80);
 				RefreshCanvas();
 				common_diag.set_text("é˜¿é’ï¼šè§‰å¾—å¥½è™šå¼±ï¼Œåœ¨åºŠä¸Šä¼‘æ¯ä¸€ä¸‹å§ã€‚");
@@ -950,7 +967,7 @@ void FightEnd()
 						Map_shaoxing.del_npc(&Wujianshi1 );
 						Map_shaoxing.del_npc(&Wujianshi2 );
 						
-						//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
+
 						Map_shaoxing.add_npc(&Fanli, 30, 220);
 						Aqing.set_location(1, 0, 180, 220);
 						
@@ -989,7 +1006,7 @@ void FightEnd()
 							common_diag.show(screen);
 							//FlipPage();
 							
-							//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
+
 							Yehaizi.set_location(1,3, 350,150);
 							Flag = GAME_MESSAGE_;
 						}
@@ -1159,7 +1176,7 @@ void AutoPlay()
 		break;
 	case 201:	//ä»å´å›½åˆ°è¶Šå›½
 	
-	//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
+
 		Aqing.set_location(0,0, 200,100);
 		GotoMap(&Map_outside);
 		//ClrScr();
@@ -1220,7 +1237,7 @@ void AutoPlay()
 			Map_shaoxing.del_npc(&Fanli );
 			RefreshCanvas();
 			
-			//¿ÉÄÜĞèÒªĞŞ¸Ä £¨int dir, int step, int x, int y£© 
+
 			Fanli.set_location(2,0,80,95);
 			Flag = MAIN_MOVE_;
 		}
@@ -2826,12 +2843,23 @@ void InitData()
 	common_diag.set_dlg(dlg, dlg_font, &dlg_color);
 
 	//åˆå§‹åŒ–å­˜æ¡£
+
+#ifdef PSP
+	GameRecord[0].set_record (160,190,90,25,"å­˜æ¡£ä¸€",
+		"save/1.sav",1,menu, menu_font, &menu_color);
+	GameRecord[1].set_record (160,215,90,25,"å­˜æ¡£äºŒ",
+		"save/2.sav",0,menu, menu_font, &menu_color);
+	GameRecord[2].set_record (160,240,90,25,"å­˜æ¡£ä¸‰",
+		"save/3.sav",0,menu, menu_font, &menu_color);
+#else
 	GameRecord[0].set_record (160,220,90,25,"å­˜æ¡£ä¸€",
 		"save/1.sav",1,menu, menu_font, &menu_color);
 	GameRecord[1].set_record (160,245,90,25,"å­˜æ¡£äºŒ",
 		"save/2.sav",0,menu, menu_font, &menu_color);
 	GameRecord[2].set_record (160,270,90,25,"å­˜æ¡£ä¸‰",
 		"save/3.sav",0,menu, menu_font, &menu_color);
+#endif
+
 
 	//åˆå§‹åŒ–åœ°å›¾	
 	Map_aqing.init_map (10,"é˜¿é’å®¶",Tile_aqing,Trap_aqing, Block_aqing,map_tile1, 4, message_font, &message_color);	//1
