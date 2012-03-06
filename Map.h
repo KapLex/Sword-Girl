@@ -9,6 +9,8 @@
 #ifdef PSP
     #define SCR_W 480
     #define SCR_H 270
+
+
 #else
     #define SCR_W 480
     #define SCR_H 320
@@ -28,13 +30,7 @@ public:
 	short Block[10][15];
 	int count_in_row;
 
-//TO DO PSP  
-#ifdef PSP
-#else  
-#endif	
-
-  SDL_Surface * Surf;	
-
+    SDL_Surface * Surf;	
 
 	int NpcNum;
 	int Npcs[15];
@@ -52,6 +48,9 @@ public:
 	void draw_map(SDL_Surface *dest_surf, Role& player,
             SDL_Surface *assist_surf);
 	void draw_map_only(SDL_Surface *dest_surf);
+
+
+
 	void add_npc(Role *, int x, int y);
 	void add_npc_id(int id);
 	void del_npc_id(int id);

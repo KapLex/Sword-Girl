@@ -15,7 +15,15 @@ void Menu::set_menu (const char name[],int x,int y, int w,int h,
 {
 	strcpy(Name,name);
 	X = x;
-	Y = y;
+
+#ifdef PSP
+    Y=(y*272)/320;
+#else
+    Y = y;
+#endif
+
+//	Y = y;
+
 	W = w;
 	H = h;
 	Sel = sel;

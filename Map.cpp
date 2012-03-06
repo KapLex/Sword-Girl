@@ -55,11 +55,19 @@ void Map::draw_map_only(SDL_Surface *dest_surf)	//只画地图，用于战斗背
 		for(j=0;j<15;j++)
 		{
 			TileNum = Tile[i][j];			
-			map_src.x = (TileNum % count_in_row)*32;
-			map_src.y = (TileNum/count_in_row)*32;			
-			map_src.w = 32;
-			map_src.h = 32;
-
+            if (TileNum <40||count_in_row==15)
+            {
+			    map_src.x = (TileNum % count_in_row)*32;
+			    map_src.y = (TileNum/count_in_row)*32;
+            }
+            else 
+            {
+			    map_src.x = (TileNum % count_in_row)*32+128;
+			    map_src.y = (TileNum/count_in_row)*32-320;         
+            }
+			
+			    map_src.w = 32;
+			    map_src.h = 32;   
 #ifdef PSP
             map_dest.x = j*32;
             map_dest.y = i*27;
@@ -91,10 +99,19 @@ void Map::draw_map (SDL_Surface * dest_surf,
 		for(j=0;j<15;j++)
 		{
 			TileNum = Tile[i][j];
-			map_src.x = (TileNum % count_in_row)*32;
-			map_src.y = (TileNum/count_in_row)*32;
-			map_src.w = 32;
-			map_src.h = 32;
+            if (TileNum <40||count_in_row==15)
+            {
+			    map_src.x = (TileNum % count_in_row)*32;
+			    map_src.y = (TileNum/count_in_row)*32;
+            }
+            else 
+            {
+			    map_src.x = (TileNum % count_in_row)*32+128;
+			    map_src.y = (TileNum/count_in_row)*32-320;         
+            }
+			
+			    map_src.w = 32;
+			    map_src.h = 32;   
 
 #ifdef PSP
             map_dest.x = j*32;

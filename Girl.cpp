@@ -1,10 +1,135 @@
-//girl.cpp
+
 
 #include <math.h>
 #include <stdio.h>
 #include "Girl.h"
 #include "assist.h"
 
+#ifdef PSP
+//    #include "input.h"
+    #include <pspctrl.h>
+#endif
+
+
+
+#ifdef PSP
+       typedef struct PSPInput
+       {
+	           SceCtrlData	Input;
+	           unsigned long	Pressed;
+	           unsigned long	Held;
+       } PSPInput;
+
+       static PSPInput	Input;
+       
+      static void AddInput (const unsigned long Button)
+      {
+        if ((Input.Input.Buttons & Button) != 0)	// Button is down
+        {
+          if ((Input.Held & Button) == 0)			// Held is not TRUE
+          {
+            Input.Pressed	|= Button;			// so set both Pressed
+            Input.Held		|= Button;			// and Held to TRUE
+          }
+        }
+        else										// Button is up
+        {
+          Input.Pressed	&= ~Button;				// so set Presses
+          Input.Held		&= ~Button;				// and Held to FALSE
+        }
+      }
+
+      bool PSPInputInit(void)
+      {
+	      memset (&Input, 0, sizeof(PSPInput));
+	      sceCtrlSetSamplingCycle (0);
+	      sceCtrlSetSamplingMode (PSP_CTRL_MODE_ANALOG);      
+	      return true;
+      }
+
+      void PSPInputShutdown	(void)
+      {
+      }
+
+      void PSPInputUpdate	(void)
+      {    
+	       sceCtrlPeekBufferPositive (&Input.Input, 1);
+
+           AddInput (PSP_CTRL_SELECT);
+	       AddInput (PSP_CTRL_START);
+	       AddInput (PSP_CTRL_UP);
+	       AddInput (PSP_CTRL_RIGHT);
+	       AddInput (PSP_CTRL_DOWN);
+	       AddInput (PSP_CTRL_LEFT);
+	       AddInput (PSP_CTRL_LTRIGGER);
+	       AddInput (PSP_CTRL_RTRIGGER);
+	       AddInput (PSP_CTRL_TRIANGLE);
+	       AddInput (PSP_CTRL_CIRCLE);
+	       AddInput (PSP_CTRL_CROSS);
+	       AddInput (PSP_CTRL_SQUARE);
+      }
+     // bool PSPInputAny		(void);
+      bool PSPInputPressed	(const unsigned long Button)
+      {
+           if (((Input.Pressed & Button) != 0))	// Pressed is TRUE
+           {
+              Input.Pressed	&= ~Button;			// so set it to FALSE
+              return true;						// and return TRUE
+           }
+           return false;
+      }
+
+      bool PSPInputHeld	(const unsigned long Button)
+       {
+	       return ((Input.Held & Button) != 0);
+       }
+
+#endif
+
+
+#ifdef PSP
+    class Gamekeys
+    {          
+    public:
+        void GetKeyState(void){}
+        bool operator[](const unsigned long Button)
+        {
+          return PSPInputHeld(Button);
+        }
+    };
+
+#else 
+
+    class Gamekeys
+    {          
+    private:
+        Uint8 * keys;
+
+    public:
+        void GetKeyState(void)
+        {
+            keys=SDL_GetKeyState(NULL);
+        }
+
+        bool operator[](const unsigned long Button)
+        {
+          return keys[Button];
+        }
+    };
+#endif
+
+
+     static Gamekeys keys;
+
+#ifdef PSP    
+    #define SDLK_ESCAPE         PSP_CTRL_CIRCLE
+    #define SDLK_SPACE          PSP_CTRL_CROSS          
+    #define SDLK_RETURN         PSP_CTRL_TRIANGLE
+    #define SDLK_UP             PSP_CTRL_UP
+    #define SDLK_DOWN           PSP_CTRL_DOWN
+    #define SDLK_RIGHT          PSP_CTRL_RIGHT
+    #define SDLK_LEFT           PSP_CTRL_LEFT
+#endif
 
 
 
@@ -337,6 +462,9 @@ short Trap_xiangfang[10][15] = { //范蠡府厢房的陷阱分布
 
 
 //****************************应用程序函数******************************* 
+extern "C" {
+       int main (int argc, char *argv[]);
+}
 
 //程序入口函数
 int main(int argc, char ** argv)
@@ -365,8 +493,15 @@ int main(int argc, char ** argv)
 	Flag = GAME_LOAD_;	//设置游戏进度 
 	InitGame();	//游戏初始化
 
+#ifdef PSP
+    PSPInputInit();
+#endif
+
     while(game_running){
 
+    #ifdef PSP
+       PSPInputUpdate();
+    #endif
         if(SDL_PollEvent(&event)){
             if(event.type == SDL_QUIT)
                 game_running = 0;
@@ -374,13 +509,13 @@ int main(int argc, char ** argv)
 
 		MainLoop();
         SDL_Flip(screen);
-        SDL_Delay(80);
+        SDL_Delay(60);
     }
 
 
     CloseFonts();
     FreeSDL();
-
+    return 0;
 }
 	
 
@@ -400,8 +535,7 @@ int main(int argc, char ** argv)
 void InitSDL( int win )
 {
     Uint32 colorkey;
-
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_JOYSTICK) != 0) {
         printf("Unable to initialize SDL: %s\n", SDL_GetError());
         exit(1);
     }
@@ -409,9 +543,9 @@ void InitSDL( int win )
     atexit(SDL_Quit);
 
     if (win == 0)
-        screen = SDL_SetVideoMode(SCR_W, SCR_H, 16, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
+        screen = SDL_SetVideoMode(SCR_W, SCR_H, 16, SDL_SWSURFACE|SDL_FULLSCREEN);
     else
-        screen = SDL_SetVideoMode(SCR_W, SCR_H, 16, SDL_HWSURFACE|SDL_DOUBLEBUF);
+        screen = SDL_SetVideoMode(SCR_W, SCR_H, 16, SDL_SWSURFACE);
 
     if (screen == NULL) {
         printf("Unable to set video mode: %s\n", SDL_GetError());
@@ -657,8 +791,8 @@ void MainMove()
 {
 	RefreshCanvas();//先显示后计算
 
-    Uint8 *keys = SDL_GetKeyState(NULL);
-
+    // Uint8 *keys = SDL_GetKeyState(NULL);
+	keys.GetKeyState();
     if (keys[SDLK_ESCAPE]) {
 		DrawSystemMenu();
 		Flag = SYSTEM_MENU_;
@@ -773,7 +907,7 @@ void MainMove()
 //开始战斗函数
 void StartFight()
 {
-    Uint8 *keys = SDL_GetKeyState(NULL);
+    keys.GetKeyState();
 	if(keys[SDLK_SPACE]||keys[SDLK_RETURN]) {
 		if (common_diag.is_over()) {
 			fAqing.Y = current_enemy->Y;
@@ -858,7 +992,7 @@ void FightEnd()
 {
 	current_enemy->cHP = current_enemy->HP;
 	
-    Uint8 *keys = SDL_GetKeyState(NULL);
+    keys.GetKeyState();
 	if(keys[SDLK_SPACE]||keys[SDLK_RETURN]) {
 		if (common_diag.is_over()) {
 			if (fAqing.cHP == 0)	//如果阿青失败
@@ -1029,7 +1163,7 @@ void FightEnd()
 						{
 							really_defeat_jianke = 1;
 							
-							//������Ҫ�޸� 
+							
 							Jianke.X += 30;
 							Jianke.Y -= 20;
 							common_diag.set_text("神秘剑客：真为你感到高兴！你可以拿走宝箱中的剑了，真的很适合你的。");
@@ -1083,7 +1217,7 @@ void FightEnd()
 //系统消息显示中
 void GameMessage()
 {
-    Uint8 *keys = SDL_GetKeyState(NULL);
+    keys.GetKeyState();
 
 	if(keys[SDLK_SPACE])
 	{
@@ -1165,8 +1299,8 @@ void AutoPlay()
 	switch(TrapNum)
 	{
 	case 200:	//从越国到吴国
-	//������Ҫ�޸� ��int dir, int step, int x, int y�� 
-		Aqing.set_location(3,0,240,SCR_H-40);
+
+		Aqing.set_location(3,0,240,280);
 		GotoMap(&Map_Wuguo);
 		//ClrScr();
 		common_diag.set_text("经过四五天的长途跋涉，小太妹阿青终于来到了吴国都城前。");
@@ -1268,7 +1402,13 @@ void AutoPlay()
 	case 207:	
 		WuWeibing1.X += 30;
 		WuWeibing2.X -= 30;
-		Aqing.Y = 280;
+		
+		#ifdef PSP
+			Aqing.Y = (280*272)/320;
+		#else
+			Aqing.Y = 280;
+		#endif
+
 		RefreshCanvas();
 		common_diag.set_text("吴国卫兵：后面就是吴王宫，你不能再往里走了。");
 		common_diag.show(screen);
@@ -1751,7 +1891,7 @@ void TreatNpc()
 void GameTitle()
 {	
 	
-    Uint8 *keys = SDL_GetKeyState(NULL);
+    keys.GetKeyState();
 
 	if(keys[SDLK_ESCAPE])	//如果按下ESC
 	{
@@ -1759,6 +1899,9 @@ void GameTitle()
 		Flag = GAME_EXIT_;
 		return;
 	}
+
+
+
 
 	//如果敲回车或空格，执行菜单功能
 	if( keys[SDLK_SPACE] )	
@@ -1843,7 +1986,7 @@ void GameExit()
 //游戏过程中调出系统菜单
 void System_Menu()
 {
-    Uint8 *keys = SDL_GetKeyState(NULL);
+    keys.GetKeyState();
 
 	if(keys[SDLK_ESCAPE])	//如果按下ESC
 	{
@@ -1925,7 +2068,7 @@ void System_Menu()
 //读取进度函数
 void Load()
 {
-    Uint8 *keys = SDL_GetKeyState(NULL);
+    keys.GetKeyState();
 
 	if(keys[SDLK_ESCAPE])
 	{
@@ -2001,7 +2144,7 @@ void Load()
 //存储进度函数
 void Store()
 {
-    Uint8 *keys = SDL_GetKeyState(NULL);
+    keys.GetKeyState();
 
 	if(keys[SDLK_ESCAPE])
 	{
@@ -2074,7 +2217,7 @@ void Store()
 
 void BeforeSelect()
 {	
-    Uint8 *keys = SDL_GetKeyState(NULL);
+    keys.GetKeyState();
 
 	if(keys[SDLK_SPACE]||keys[SDLK_RETURN])
 	{
@@ -2095,7 +2238,7 @@ void BeforeSelect()
 
 void WaitSelect()
 {
-    Uint8 *keys = SDL_GetKeyState(NULL);
+    keys.GetKeyState();
 	//如果敲回车或空格，执行菜单功能
 	if( keys[SDLK_SPACE] )	
 	{
@@ -2229,7 +2372,7 @@ void SelectNo()
 //查看详细状态信息
 void CheckState()
 {
-    Uint8 *keys = SDL_GetKeyState(NULL);
+    keys.GetKeyState();
 
 	if(keys[SDLK_SPACE])
 	{
@@ -2244,7 +2387,7 @@ void CheckState()
 //查看作品信息
 void CheckAbout()
 {
-    Uint8 *keys = SDL_GetKeyState(NULL);
+    keys.GetKeyState();
 	if(keys[SDLK_SPACE])
 	{
 		//PressKey(VK_SPACE);
@@ -2824,13 +2967,13 @@ short FindNpc()	//寻找玩家面对的npc
 void InitData()
 {
 		//初始化菜单
-	StartMenu[0].set_menu ("新建游戏",(SCR_W/2)-31,SCR_H-105,
+	StartMenu[0].set_menu ("新建游戏",(SCR_W/2)-31,215,
 						  70,25,1,menu, menu_font, &menu_color);
-	StartMenu[1].set_menu ("读    档",(SCR_W/2)-31,SCR_H-80,
+	StartMenu[1].set_menu ("读    档",(SCR_W/2)-31,240,
 						  70,25,0,menu, menu_font, &menu_color);
-	StartMenu[2].set_menu ("作品信息",(SCR_W/2)-31,SCR_H-55,
+	StartMenu[2].set_menu ("作品信息",(SCR_W/2)-31,265,
 						  70,25,0,menu, menu_font, &menu_color);
-	StartMenu[3].set_menu ("退    出",(SCR_W/2)-31,SCR_H-30,
+	StartMenu[3].set_menu ("退    出",(SCR_W/2)-31,290,
 						  70,25,0,menu, menu_font, &menu_color);
 	SystemMenu[0].set_menu ("状 态",10,10,50,25,1,menu, menu_font, &menu_color);
 	SystemMenu[1].set_menu ("存 档",10,35,50,25,0,menu, menu_font, &menu_color);

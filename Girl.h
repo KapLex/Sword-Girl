@@ -46,6 +46,9 @@ int SCR_X;	//窗口在屏幕上的位置
 int SCR_Y;
 //RECT OldWindow;	//用于处理窗口移动事件，记录移动前窗口位置
 
+
+
+
 //页面
 SDL_Surface *screen;
 SDL_Surface *hero;

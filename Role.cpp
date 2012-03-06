@@ -27,8 +27,15 @@ void Role::set_location(int dir, int step, int x, int y)
 {
 	Dir = dir;
 	Step = step;
+
 	X = x;
-	Y = y;
+#ifdef PSP
+    Y=(y*272)/320;
+#else
+    Y = y;
+#endif
+
+
 }
 
 void Role::role_set (short id, const char *name,int h,int w,int x,int y,
