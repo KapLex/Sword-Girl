@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <pspkernel.h>
-
+//test
 #undef main
 extern int SDL_main(int argc, char *argv[]);
 
